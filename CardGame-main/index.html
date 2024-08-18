@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game 2 (card game)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body  class="container" style="background-color: black;color: aliceblue;">
+
+</body>
+<script>
+    const body = document.querySelector('body');
+    let imagesSrcArr = ["./square.jpg","./square.jpg","./circle.jpg","./circle.jpg","./triangle.jpg","./triangle.jpg","./star.jpg","./star.jpg","./square.jpg","./square.jpg","./circle.jpg","./circle.jpg","./triangle.jpg","./triangle.jpg","./star.jpg","./star.jpg"];
+    let randomImagesSrc = [];
+    let ImageS = [];//conatains randomised images
+    let clickedImage = [];
+    let score = 0;
+    
+    for(i=0;i<16;i++){
+        //randomise images src
+       let num  = Math.floor(Math.random()* imagesSrcArr.length);
+       randomImagesSrc.push(imagesSrcArr[num]);
+       imagesSrcArr.splice(num,1);
+
+       //create img element and set its src to randomImageArr images
+       const image = document.createElement('img');
+       image.id =`image${i}`;
+       image.setAttribute("src",randomImagesSrc[i]);
+       image.setAttribute("class","col-3 p-1 ")
+       image.width = 100;
+       image.height = 220;
+       //display the randomised images
+       body.appendChild(image);
+
+       ImageS.push(image);
+    }
+    
+    setTimeout(function () {
+    let time = 0;
+    body.innerHTML = `<div class="d-flex justify-content-between" id='div'>
+                        <strong class="fs-1" >Matched Pairs: <span id="pairsSpan">0</span></strong>  
+                        <strong class="fs-1" >Time: <span id="timeSpan">0:00</span></strong>
+                    </div>`;
+    const timeSpan = document.querySelector('#timeSpan');
+    const pairsSpan = document.querySelector('#pairsSpan');
+    const div = document.querySelector('#div');
+    const clickedImage = [];
+    let score = 0;
+
+    const interVal = setInterval(function () {
+        time += 0.01;
+        timeSpan.innerText = `${time.toFixed(2)}`;
+        if(score===8){
+                clearInterval(interVal);
+                div.innerHTML = '';
+                const results = document.createElement('strong');
+                results.innerText = `You matched all the pairs! Your Time : ${time.toFixed(2)}s`;
+                results.setAttribute('class','fs-1');
+                body.append(results);
+            }
+    }, 10);
+
+    for (let i = 0; i < 16; i++) {
+        const image = document.createElement('img');
+        image.setAttribute("src", "./back.jpg");
+        image.setAttribute("class", "col-3 p-1 ");
+        image.setAttribute("id",`image${i}`)
+        image.width = 100;
+        image.height = 220;
+
+        image.addEventListener('click', function () {
+            image.src = ImageS[i].src;
+            clickedImage.push(image);
+
+            if (clickedImage.length === 2) {
+                setTimeout(function () {
+                    const [image1, image2] = clickedImage;
+                    if (image1.src === image2.src) {
+                        if(image1.id!=image2.id){
+                            image1.src = './tick.png';
+                            image2.src = './tick.png';
+                            score++;
+                            pairsSpan.innerText = `${score}`;
+                            image1.style.pointerEvents = 'none';
+                            image2.style.pointerEvents = 'none';
+                        }
+                        else{
+                            image1.src = './back.jpg';
+                        }
+                    } else {
+                        image1.src = './back.jpg';
+                        image2.src = './back.jpg';
+                    }
+                    clickedImage.length = 0;
+                }, 200);
+            }
+        });
+        body.appendChild(image);
+    }
+}, 2000);
+</script>
+</html>
